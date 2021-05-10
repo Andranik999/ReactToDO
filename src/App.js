@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { Footer } from "./Footer";
+import { TodoList } from "./TodoList.jsx";
 
-function App() {
+const App = () => {
+  const [todos, setTodos] = useState([]);
+  const [value, setValue] = useState("");
+
+  const handleChange = e => {
+    setValue(e.target.value);
+  };
+
+  const handleKeyDown = e => {
+    if (e.key === "Enter") {
+      const trimmedText = value.trim();
+
+      if (trimmedText) {
+        setTodos([trimmedText, ...todos]);
+        setValue("");
+      }
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <section className="todo-app">
+        <header className="header">
+          <h1>todos</h1>
+          <input
+            className="new-todo"
+            placeholder="What needs to be done"
+            onChange={handleChange}
+            value={value}
+            onKeyDown={handleKeyDown}
+          />
+        </header>
+        <section className="main-todos">
+          <TodoList todos={todos} />
+        </section>
+      </section>
+      <Footer />
+    </>
   );
-}
+};
 
 export default App;
