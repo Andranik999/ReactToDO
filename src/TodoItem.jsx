@@ -24,7 +24,6 @@ export const TodoItem = ({ todo, onRemove, toggleTodoDone }) => {
 
       if (trimmedText) {
         todo.title = trimmedText;
-        setTitle("");
         setIsEditing(false);
       }
     }
