@@ -1,24 +1,21 @@
-import React from "react";
+import { TodoItem } from "./TodoItem";
 
-export const TodoList = ({ todos, onRemove, toggleTodoDone }) => {
+export const TodoList = ({ todos, onRemove, toggleTodoDone, leftTasks }) => {
   return (
     <>
       <ul className="todo-list">
-        {todos.map((todo, index) => (
-          <li key={index}>
-            <div className="check" onClick={() => toggleTodoDone(todo.id)}>
-              {todo.done && <span>✓</span>}
-            </div>
-            <div className="todo-title">{todo.title}</div>
-            <div className="remove-todo" onClick={() => onRemove(todo.id)}>
-              ✕
-            </div>
-          </li>
+        {todos.map(todo => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            toggleTodoDone={toggleTodoDone}
+            onRemove={onRemove}
+          />
         ))}
       </ul>
 
       <footer className="todo-info">
-        <span className="todo-count"></span>
+        <span className="todo-count">{leftTasks} items left</span>
         <ul className="filter">
           <li className="selectAll">
             <span>All</span>
@@ -28,9 +25,6 @@ export const TodoList = ({ todos, onRemove, toggleTodoDone }) => {
           </li>
           <li className="completed-todos">
             <span>Completed</span>
-          </li>
-          <li>
-            <span className="clearDone">Clear Completed</span>
           </li>
         </ul>
       </footer>

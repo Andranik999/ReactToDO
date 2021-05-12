@@ -41,7 +41,9 @@ const App = () => {
 
   const doneTodos = todos.filter(todo => todo.done);
 
-  const toggleAll = e => {
+  const leftTasks = todos.length - doneTodos.length;
+
+  const toggleAll = () => {
     const toggledTodos = [...todos];
     if (!doneTodos.length) {
       toggledTodos.forEach(todo => {
@@ -78,11 +80,13 @@ const App = () => {
             onKeyDown={handleKeyDown}
           />
         </header>
+
         <section className="main-todos">
           <TodoList
             todos={todos}
             toggleTodoDone={toggleTodoDone}
             onRemove={onRemove}
+            leftTasks={leftTasks}
           />
         </section>
       </section>
