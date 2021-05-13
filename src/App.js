@@ -1,11 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Footer } from "./Footer";
 import { TodoList } from "./TodoList.jsx";
 import { v4 as uuidv4 } from "uuid";
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
+  const savedTodos = JSON.parse(localStorage.getItem("todos"));
+  const [todos, setTodos] = useState(savedTodos || []);
   const [value, setValue] = useState("");
+  const [filters, setFilters] = useState("all");
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
+  const setFilter = type => {
+    setFilters(type);
+  };
+
+  const filteredTodos = () => {
+    return todos.filter(todo => {
+      if (filters === "active") {
+        return !todo.done;
+      } else if (filters === "completed") {
+        return todo.done;
+      }
+
+      return todos;
+    });
+  };
 
   const toggleTodoDone = id => {
     const copiedTodos = [...todos];
@@ -37,6 +59,10 @@ const App = () => {
         setValue("");
       }
     }
+  };
+  const removeCompleted = () => {
+    const newItems = todos.filter(todo => !todo.done);
+    setTodos(newItems);
   };
 
   const doneTodos = todos.filter(todo => todo.done);
@@ -83,10 +109,13 @@ const App = () => {
 
         <section className="main-todos">
           <TodoList
-            todos={todos}
+            todos={filteredTodos()}
             toggleTodoDone={toggleTodoDone}
             onRemove={onRemove}
             leftTasks={leftTasks}
+            removeCompleted={removeCompleted}
+            setFilter={setFilter}
+            doneTodos={doneTodos}
           />
         </section>
       </section>

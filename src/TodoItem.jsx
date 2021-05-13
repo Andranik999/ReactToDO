@@ -4,7 +4,8 @@ export const TodoItem = ({ todo, onRemove, toggleTodoDone }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(todo.title);
   const inputRef = useRef();
-  const handleDoubleClick = () => {
+
+  const handleDoubleClick = e => {
     setIsEditing(true);
   };
 
@@ -19,6 +20,10 @@ export const TodoItem = ({ todo, onRemove, toggleTodoDone }) => {
   };
 
   const handleKeyDown = e => {
+    if (e.key === "Escape") {
+      setIsEditing(false);
+      setTitle("");
+    }
     if (e.key === "Enter") {
       const trimmedText = title.trim();
 
@@ -45,7 +50,12 @@ export const TodoItem = ({ todo, onRemove, toggleTodoDone }) => {
           <div className="check" onClick={() => toggleTodoDone(todo.id)}>
             {todo.done && <span>✓</span>}
           </div>
-          <div className="todo-title">{todo.title}</div>
+          <div
+            className="todo-title"
+            style={{ textDecoration: todo.done ? "line-through" : "" }}
+          >
+            {todo.title}
+          </div>
           <div className="remove-todo" onClick={() => onRemove(todo.id)}>
             ✕
           </div>
