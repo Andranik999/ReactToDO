@@ -9,7 +9,7 @@ const App = () => {
   const [filters, setFilters] = useState("all");
 
   useEffect(() => {
-    setTodos(JSON.parse(localStorage.getItem("todos")));
+    setTodos(JSON.parse(localStorage.getItem("todos")) || []);
   }, []);
 
   const setFilter = type => {
