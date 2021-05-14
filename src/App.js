@@ -4,14 +4,13 @@ import { TodoList } from "./TodoList.jsx";
 import { v4 as uuidv4 } from "uuid";
 
 const App = () => {
-  const savedTodos = JSON.parse(localStorage.getItem("todos"));
-  const [todos, setTodos] = useState(savedTodos || []);
+  const [todos, setTodos] = useState([]);
   const [value, setValue] = useState("");
   const [filters, setFilters] = useState("all");
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+    setTodos(JSON.parse(localStorage.getItem("todos")));
+  }, []);
 
   const setFilter = type => {
     setFilters(type);
@@ -39,11 +38,13 @@ const App = () => {
     });
 
     setTodos(copiedTodos);
+    localStorage.setItem("todos", JSON.stringify(copiedTodos));
   };
 
   const onRemove = id => {
     const newTodos = todos.filter(todo => todo.id !== id);
     setTodos(newTodos);
+    localStorage.setItem("todos", JSON.stringify(newTodos));
   };
 
   const handleChange = e => {
@@ -56,6 +57,15 @@ const App = () => {
 
       if (trimmedText) {
         setTodos([{ title: trimmedText, done: false, id: uuidv4() }, ...todos]);
+
+        localStorage.setItem(
+          "todos",
+          JSON.stringify([
+            { title: trimmedText, done: false, id: uuidv4() },
+            ...todos
+          ])
+        );
+
         setValue("");
       }
     }
@@ -63,6 +73,18 @@ const App = () => {
   const removeCompleted = () => {
     const newItems = todos.filter(todo => !todo.done);
     setTodos(newItems);
+    localStorage.setItem("todos", JSON.stringify(newItems));
+  };
+
+  const editTodo = (id, title) => {
+    const copiedTodos = [...todos];
+    copiedTodos.forEach(todo => {
+      if (todo.id === id) {
+        todo.title = title;
+      }
+    });
+    setTodos(copiedTodos);
+    localStorage.setItem("todos", JSON.stringify(copiedTodos));
   };
 
   const doneTodos = todos.filter(todo => todo.done);
@@ -88,6 +110,7 @@ const App = () => {
       });
     }
     setTodos(toggledTodos);
+    localStorage.setItem("todos", JSON.stringify(toggledTodos));
   };
 
   return (
@@ -116,6 +139,8 @@ const App = () => {
             removeCompleted={removeCompleted}
             setFilter={setFilter}
             doneTodos={doneTodos}
+            editTodo={editTodo}
+            filters={filters}
           />
         </section>
       </section>

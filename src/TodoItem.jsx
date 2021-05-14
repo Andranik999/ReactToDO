@@ -1,12 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 
-export const TodoItem = ({ todo, onRemove, toggleTodoDone }) => {
+export const TodoItem = ({ todo, onRemove, toggleTodoDone, editTodo }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(todo.title);
   const inputRef = useRef();
 
   const handleDoubleClick = e => {
     setIsEditing(true);
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
   };
 
   useEffect(() => {
@@ -19,31 +23,33 @@ export const TodoItem = ({ todo, onRemove, toggleTodoDone }) => {
     setTitle(e.target.value);
   };
 
-  const handleKeyDown = e => {
+  const handleEdit = e => {
     if (e.key === "Escape") {
       setIsEditing(false);
       setTitle("");
     }
+
     if (e.key === "Enter") {
       const trimmedText = title.trim();
 
       if (trimmedText) {
-        todo.title = trimmedText;
+        editTodo(todo.id, title);
         setIsEditing(false);
       }
     }
   };
 
   return (
-    <li onDoubleClick={handleDoubleClick}>
+    <li onDoubleClick={handleDoubleClick} onBlur={handleBlur}>
       {isEditing ? (
         <input
           ref={inputRef}
           onChange={handleChange}
           value={title}
-          onKeyDown={handleKeyDown}
+          onKeyDown={handleEdit}
           className="editable-input"
           type="text"
+          style={{ outline: 0 }}
         />
       ) : (
         <>

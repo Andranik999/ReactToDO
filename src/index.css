@@ -176,6 +176,6 @@ li:hover .remove-todo {
   top: 15px;
 }
 
-.hide {
-  display: none;
+.active {
+  border: 1px solid grey;
 }

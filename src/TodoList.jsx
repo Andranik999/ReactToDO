@@ -7,7 +7,10 @@ export const TodoList = ({
   leftTasks,
   removeCompleted,
   setFilter,
-  doneTodos
+  doneTodos,
+  savedTodos,
+  editTodo,
+  filters
 }) => {
   return (
     <>
@@ -18,6 +21,9 @@ export const TodoList = ({
             todo={todo}
             toggleTodoDone={toggleTodoDone}
             onRemove={onRemove}
+            savedTodos={savedTodos}
+            todos={todos}
+            editTodo={editTodo}
           />
         ))}
       </ul>
@@ -25,13 +31,15 @@ export const TodoList = ({
       <footer className="todo-info">
         <span className="todo-count">{leftTasks} items left</span>
         <ul className="filter">
-          <li className="selectAll">
+          <li className={filters === "all" ? "active" : "selectAll"}>
             <span onClick={() => setFilter("all")}>All</span>
           </li>
-          <li className="active-todos">
+          <li className={filters === "active" ? "active" : "active-todos"}>
             <span onClick={() => setFilter("active")}>Active</span>
           </li>
-          <li className="completed-todos">
+          <li
+            className={filters === "completed" ? "active" : "completed-todos"}
+          >
             <span onClick={() => setFilter("completed")}>Completed</span>
           </li>
           <li>
