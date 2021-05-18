@@ -33,7 +33,7 @@ export const TodoItem = ({ todo, onRemove, toggleTodoDone, editTodo }) => {
       const trimmedText = title.trim();
 
       if (trimmedText) {
-        editTodo(todo.id, title);
+        editTodo(todo, trimmedText);
         setIsEditing(false);
       }
     }
@@ -53,7 +53,7 @@ export const TodoItem = ({ todo, onRemove, toggleTodoDone, editTodo }) => {
         />
       ) : (
         <>
-          <div className="check" onClick={() => toggleTodoDone(todo.id)}>
+          <div className="check" onClick={() => toggleTodoDone(todo)}>
             {todo.done && <span>✓</span>}
           </div>
           <div

@@ -2,14 +2,26 @@ import React, { useState, useEffect } from "react";
 import { Footer } from "./Footer";
 import { TodoList } from "./TodoList.jsx";
 import { v4 as uuidv4 } from "uuid";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addTodo,
+  remove,
+  removeSelected,
+  edit,
+  toggleAllTodos,
+  getTodos
+} from "./todoSlice";
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
   const [value, setValue] = useState("");
   const [filters, setFilters] = useState("all");
+  const dispatch = useDispatch();
+  const todos = useSelector(state => state.todo.todos);
+  const doneTodos = todos.filter(todo => todo.done);
+  const leftTasks = todos.length - doneTodos.length;
 
   useEffect(() => {
-    setTodos(JSON.parse(localStorage.getItem("todos")) || []);
+    dispatch(getTodos());
   }, []);
 
   const setFilter = type => {
@@ -28,23 +40,12 @@ const App = () => {
     });
   };
 
-  const toggleTodoDone = id => {
-    const copiedTodos = [...todos];
-
-    copiedTodos.forEach(todo => {
-      if (todo.id === id) {
-        todo.done = !todo.done;
-      }
-    });
-
-    setTodos(copiedTodos);
-    localStorage.setItem("todos", JSON.stringify(copiedTodos));
+  const toggleTodoDone = todo => {
+    dispatch(edit({ ...todo, done: !todo.done }));
   };
 
-  const onRemove = id => {
-    const newTodos = todos.filter(todo => todo.id !== id);
-    setTodos(newTodos);
-    localStorage.setItem("todos", JSON.stringify(newTodos));
+  const onRemove = todo => {
+    dispatch(remove({ id: todo.id }));
   };
 
   const handleChange = e => {
@@ -56,7 +57,11 @@ const App = () => {
       const trimmedText = value.trim();
 
       if (trimmedText) {
-        setTodos([{ title: trimmedText, done: false, id: uuidv4() }, ...todos]);
+        dispatch(
+          addTodo({
+            title: trimmedText
+          })
+        );
 
         localStorage.setItem(
           "todos",
@@ -71,46 +76,15 @@ const App = () => {
     }
   };
   const removeCompleted = () => {
-    const newItems = todos.filter(todo => !todo.done);
-    setTodos(newItems);
-    localStorage.setItem("todos", JSON.stringify(newItems));
+    dispatch(removeSelected());
   };
 
-  const editTodo = (id, title) => {
-    const copiedTodos = [...todos];
-    copiedTodos.forEach(todo => {
-      if (todo.id === id) {
-        todo.title = title;
-      }
-    });
-    setTodos(copiedTodos);
-    localStorage.setItem("todos", JSON.stringify(copiedTodos));
+  const editTodo = (todo, title) => {
+    dispatch(edit({ ...todo, title }));
   };
 
-  const doneTodos = todos.filter(todo => todo.done);
-
-  const leftTasks = todos.length - doneTodos.length;
-
-  const toggleAll = () => {
-    const toggledTodos = [...todos];
-    if (!doneTodos.length) {
-      toggledTodos.forEach(todo => {
-        todo.done = !todo.done;
-      });
-    }
-    if (doneTodos.length) {
-      const notDone = toggledTodos.filter(todo => !todo.done);
-      notDone.forEach(todo => {
-        todo.done = !todo.done;
-      });
-    }
-    if (doneTodos.length === toggledTodos.length) {
-      toggledTodos.forEach(todo => {
-        todo.done = !todo.done;
-      });
-    }
-    setTodos(toggledTodos);
-    localStorage.setItem("todos", JSON.stringify(toggledTodos));
+  const toggleAll = todo => {
+    dispatch(toggleAllTodos(todos, todo.title));
   };
 
   return (
