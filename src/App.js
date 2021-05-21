@@ -3,13 +3,16 @@ import { Footer } from "./Footer";
 import { TodoList } from "./TodoList.jsx";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
+import firebase from "./firebase";
+import "firebase/firestore";
+
 import {
   addTodo,
   remove,
   removeSelected,
   edit,
   toggleAllTodos,
-  getTodos
+  fetchTodos
 } from "./todoSlice";
 
 const App = () => {
@@ -21,8 +24,8 @@ const App = () => {
   const leftTasks = todos.length - doneTodos.length;
 
   useEffect(() => {
-    dispatch(getTodos());
-  }, []);
+    dispatch(fetchTodos());
+  }, [dispatch]);
 
   const setFilter = type => {
     setFilters(type);
@@ -62,13 +65,14 @@ const App = () => {
             title: trimmedText
           })
         );
-
+        let ref = firebase
+          .firestore()
+          .collection("todos")
+          .doc();
+        ref.set({ title: trimmedText, done: false }).then(setValue(""));
         localStorage.setItem(
           "todos",
-          JSON.stringify([
-            { title: trimmedText, done: false, id: uuidv4() },
-            ...todos
-          ])
+          JSON.stringify([{ title: trimmedText, done: false }, ...todos])
         );
 
         setValue("");
