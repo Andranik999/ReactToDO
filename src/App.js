@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Footer } from "./Footer";
 import { TodoList } from "./TodoList.jsx";
-import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
-import firebase from "./firebase";
-import "firebase/firestore";
 
 import {
-  addTodo,
-  remove,
+  createTodo,
   removeSelected,
   edit,
   toggleAllTodos,
-  fetchTodos
+  fetchTodos,
+  deleteTodo
 } from "./todoSlice";
 
 const App = () => {
@@ -47,8 +44,8 @@ const App = () => {
     dispatch(edit({ ...todo, done: !todo.done }));
   };
 
-  const onRemove = todo => {
-    dispatch(remove({ id: todo.id }));
+  const onRemove = id => {
+    dispatch(deleteTodo(id));
   };
 
   const handleChange = e => {
@@ -60,21 +57,7 @@ const App = () => {
       const trimmedText = value.trim();
 
       if (trimmedText) {
-        dispatch(
-          addTodo({
-            title: trimmedText
-          })
-        );
-        let ref = firebase
-          .firestore()
-          .collection("todos")
-          .doc();
-        ref.set({ title: trimmedText, done: false }).then(setValue(""));
-        localStorage.setItem(
-          "todos",
-          JSON.stringify([{ title: trimmedText, done: false }, ...todos])
-        );
-
+        dispatch(createTodo(trimmedText));
         setValue("");
       }
     }
@@ -87,8 +70,8 @@ const App = () => {
     dispatch(edit({ ...todo, title }));
   };
 
-  const toggleAll = todo => {
-    dispatch(toggleAllTodos(todos, todo.title));
+  const toggleAll = () => {
+    dispatch(toggleAllTodos());
   };
 
   return (

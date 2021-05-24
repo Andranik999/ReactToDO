@@ -11,6 +11,7 @@ export const TodoItem = ({ todo, onRemove, toggleTodoDone, editTodo }) => {
 
   const handleBlur = () => {
     setIsEditing(false);
+    setTitle(todo.title);
   };
 
   useEffect(() => {
